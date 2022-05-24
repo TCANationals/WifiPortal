@@ -23,7 +23,7 @@ router.use(bodyParser.urlencoded({ extended: true }))
 app.set('views', path.join(__dirname, 'views'))
 
 // Serve static files
-app.use('/static', express.static(path.join(__dirname, 'static')))
+app.use('/static', express.static(path.join(__dirname, 'static'), {acceptRanges: false, immutable: true, maxAge: 300000}))
 
 router.post('/_login', (req, res) => {
   const body = req.body
