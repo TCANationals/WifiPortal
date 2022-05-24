@@ -25,18 +25,32 @@ async function routeEvent(event) {
   if (request.url.includes('/static')) {
     return handleStaticAssets(event)
   } else {
-    const renderedResp = await htmlEngine.parseAndRender(
-      loginHtml,
-      {
-        request: {
-          body: request.body,
-          headers: request.headers,
-          method: request.method,
-          url: request.url,
-        }
-      }
-    )
+    const url = new URL(request.url);
+    const queryString = url.search.slice(1).split('&');
+    let params = {};
+  
+    // Parse query string
+    queryString.forEach(item => {
+      const kv = item.split('=')
+      if (kv[0]) params[kv[0]] = kv[1] || true
+    })
 
+    let respVars = {
+      request: {
+        body: request.body,
+        headers: request.headers,
+        method: request.method,
+        url: request.url,
+        params: params,
+      }
+    }
+
+    if (request.method.toUpperCase() == "POST") {
+      const reqParams = await readRequestBody(request)
+      respVars.request.body = reqParams
+    }
+
+    const renderedResp = await htmlEngine.parseAndRender(loginHtml, respVars)
     const response = new Response(renderedResp, { status: 200 })
     setResponseHeaders(response)
     response.headers.set('Content-Type', 'text/html')
@@ -87,6 +101,30 @@ async function handleStaticAssets(event) {
     }
 
     return new Response(e.message || e.toString(), { status: 500 })
+  }
+}
+
+async function readRequestBody(request) {
+  const { headers } = request;
+  const contentType = headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    return JSON.stringify(await request.json());
+  } else if (contentType.includes('application/text')) {
+    return request.text();
+  } else if (contentType.includes('text/html')) {
+    return request.text();
+  } else if (contentType.includes('form')) {
+    const formData = await request.formData();
+    const body = {};
+    for (const entry of formData.entries()) {
+      body[entry[0]] = entry[1];
+    }
+    return JSON.stringify(body);
+  } else {
+    // Perhaps some other type of data was submitted in the form
+    // like an image, or some other binary data.
+    return '{}';
   }
 }
 
