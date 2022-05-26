@@ -1,7 +1,7 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Serverless Express Application/API powered by API Gateway and Lambda
+Description: NLSC WiFi Portal
 Parameters:
   DomainName:
     Type: String
@@ -24,7 +24,7 @@ Resources:
     Properties:
       CodeUri: ./dist
       Handler: main.handler
-      MemorySize: 128
+      MemorySize: 256
       Runtime: nodejs12.x
       Timeout: 30
       Environment:
@@ -42,11 +42,27 @@ Resources:
   UserTable:
     Type: AWS::Serverless::SimpleTable
 
+  StaticLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./dist
+      Handler: static.handler
+      MemorySize: 128
+      Runtime: nodejs12.x
+      Timeout: 30
+
   # Allow ALB to invoke lambda function
   ExpressLambdaAlbPermission:
     Type: AWS::Lambda::Permission
     Properties:
       FunctionName: !GetAtt ExpressLambdaFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: elasticloadbalancing.amazonaws.com
+
+  StaticLambdaAlbPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt StaticLambdaFunction.Arn
       Action: lambda:InvokeFunction
       Principal: elasticloadbalancing.amazonaws.com
 
@@ -56,8 +72,22 @@ Resources:
     DependsOn: ExpressLambdaAlbPermission
     Properties:
       TargetType: lambda
+      TargetGroupAttributes:
+        - Key: lambda.multi_value_headers.enabled
+          Value: true
       Targets:
         - Id: !GetAtt ExpressLambdaFunction.Arn
+
+  StaticTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    DependsOn: StaticLambdaAlbPermission
+    Properties:
+      TargetType: lambda
+      TargetGroupAttributes:
+        - Key: lambda.multi_value_headers.enabled
+          Value: true
+      Targets:
+        - Id: !GetAtt StaticLambdaFunction.Arn
 
   # # Set up Global Accelerator + ALB + Target Group to get dedicated IPs
   # Accelerator:
