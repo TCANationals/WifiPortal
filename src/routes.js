@@ -21,27 +21,23 @@ app.post('/_login', async (req, res) => {
   const body = req.body
   const email = body.email
   const stationMac = body.station_mac
-  let status = true
-  if (email == undefined || email == "" || stationMac == undefined || stationMac == "") {
-    status = false
+  let resp = {status: true}
+  if (stationMac == undefined || stationMac == "") {
+    resp.status = false
   }
-  if (status) {
+  if (resp.status) {
     let userRecord = await getUserRecord(stationMac)
     if (!userRecord || userRecord.id == undefined) {
       userRecord = new User({"id": macFormatter(stationMac)})
     }
-    userRecord.email = email
+    //userRecord.email = email
     await userRecord.save()
-    res.json({
-      status: status,
-      user: wifiGuestUser,
-      pass: wifiGuestPass,
-      body: body,
-      user: userRecord,
-    })
-  } else {
-    res.json({status: status})
+    resp.user = wifiGuestUser
+    resp.pass = wifiGuestPass
+    resp.user = userRecord
+
   }
+  res.json(resp)
 })
 
 app.get('*', async (req, res) => {

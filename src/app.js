@@ -5,7 +5,6 @@ const cors = require('cors')
 const compression = require('compression')
 const { getCurrentInvoke } = require('@vendia/serverless-express')
 const ejs = require('ejs').__express
-const dynamoose = require("dynamoose")
 const app = express()
 const routes = require("./routes")
 
