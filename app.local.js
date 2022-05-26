@@ -1,3 +1,5 @@
+process.env.AWS_REGION = 'us-east-1'
+
 const app = require('./src/app')
 const port = 3002
 

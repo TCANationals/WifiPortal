@@ -27,57 +27,104 @@ Resources:
       MemorySize: 128
       Runtime: nodejs12.x
       Timeout: 30
+      Environment:
+        Variables:
+          USER_TABLE: !Ref UserTable
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UserTable
       Events:
         ProxyApiRoot:
           Type: HttpApi
           Properties:
             ApiId: !Ref ExpressApi
 
-  MyApiCertificate:
-    Type: 'AWS::CertificateManager::Certificate'
-    Condition: UseDomainName
+  UserTable:
+    Type: AWS::Serverless::SimpleTable
+
+  # Allow ALB to invoke lambda function
+  ExpressLambdaAlbPermission:
+    Type: AWS::Lambda::Permission
     Properties:
-      DomainName: !Sub '*.${DomainName}'
-      DomainValidationOptions:
-        - DomainName: !Sub '*.${DomainName}'
-          ValidationDomain: !Ref DomainName
-      SubjectAlternativeNames:
-        - !Ref DomainName
-  
-  MyApiDomainName:
-    Type: 'AWS::ApiGateway::DomainName'
-    Condition: UseDomainName
+      FunctionName: !GetAtt ExpressLambdaFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: elasticloadbalancing.amazonaws.com
+
+  # Setup target group for Lambda (will be used by ALB if enabled, otherwise no-op)
+  LambdaTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    DependsOn: ExpressLambdaAlbPermission
     Properties:
-      CertificateArn: !Ref MyApiCertificate
-      DomainName: !Ref DomainName
-  
-  MyApiBasePathMapping:
-    Type: 'AWS::ApiGateway::BasePathMapping'
-    Condition: UseDomainName
-    Properties:
-      RestApiId: !Ref ExpressApi
-      DomainName: !Ref MyApiDomainName
-      BasePath: '(none)'
-      Stage: prod
-  
-  Route53HostedZone:
-    Type: AWS::Route53::HostedZone
-    Condition: UseDomainName
-    Properties:
-      Name: !Ref DomainName
-  
-  MyApiRoute53RecordSetGroup:
-    Type: AWS::Route53::RecordSetGroup
-    Condition: UseDomainName
-    Properties:
-      HostedZoneId: !Ref Route53HostedZone
-      RecordSets:
-        - Name: !Sub ${DomainName}.
-          Type: A
-          AliasTarget:
-            EvaluateTargetHealth: false
-            HostedZoneId: !GetAtt MyApiDomainName.DistributionHostedZoneId
-            DNSName: !GetAtt MyApiDomainName.DistributionDomainName
+      TargetType: lambda
+      Targets:
+        - Id: !GetAtt ExpressLambdaFunction.Arn
+
+  # # Set up Global Accelerator + ALB + Target Group to get dedicated IPs
+  # Accelerator:
+  #   Type: AWS::GlobalAccelerator::Accelerator
+  #   Condition: UseDomainName
+  #   Properties:
+  #     Name: WifiAccelerator
+  #     Enabled: true
+
+  # AcceleratorListenerHTTP:
+  #   Type: AWS::GlobalAccelerator::Listener
+  #   Condition: UseDomainName
+  #   Properties:
+  #     AcceleratorArn:
+  #       Ref: Accelerator
+  #     Protocol: TCP
+  #     PortRanges:
+  #     - FromPort: 80
+  #       ToPort: 80
+
+  # AcceleratorListenerHTTPS:
+  #   Type: AWS::GlobalAccelerator::Listener
+  #   Condition: UseDomainName
+  #   Properties:
+  #     AcceleratorArn:
+  #       Ref: Accelerator
+  #     Protocol: TCP
+  #     PortRanges:
+  #     - FromPort: 443
+  #       ToPort: 443
+
+  # MyApiCertificate:
+  #   Type: 'AWS::CertificateManager::Certificate'
+  #   Condition: UseDomainName
+  #   Properties:
+  #     DomainName: !Sub '*.${DomainName}'
+  #     DomainValidationOptions:
+  #       - DomainName: !Sub '*.${DomainName}'
+  #         ValidationDomain: !Ref DomainName
+  #     SubjectAlternativeNames:
+  #       - !Ref DomainName
+
+  # MyApiDomainName:
+  #   Type: 'AWS::ApiGateway::DomainName'
+  #   Condition: UseDomainName
+  #   Properties:
+  #     CertificateArn: !Ref MyApiCertificate
+  #     DomainName: !Ref DomainName
+
+  # Route53HostedZone:
+  #   Type: AWS::Route53::HostedZone
+  #   Condition: UseDomainName
+  #   Properties:
+  #     Name: !Ref DomainName
+
+  # MyApiRoute53RecordSetGroup:
+  #   Type: AWS::Route53::RecordSetGroup
+  #   Condition: UseDomainName
+  #   Properties:
+  #     HostedZoneId: !Ref Route53HostedZone
+  #     RecordSets:
+  #       - Name: !Sub ${DomainName}.
+  #         Type: A
+  #         AliasTarget:
+  #           EvaluateTargetHealth: false
+  #           HostedZoneId: !GetAtt MyApiDomainName.DistributionHostedZoneId
+  #           DNSName: !GetAtt MyApiDomainName.DistributionDomainName
 
 Outputs:
   LambdaFunctionConsoleUrl:
