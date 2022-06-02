@@ -4,7 +4,7 @@
 	<title>SkillsUSA National Leadership & Skills Conference</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<link rel="icon" type="image/png" href="/static/images/icons/favicon.ico"/>
+	<link rel="icon" type="image/png" href="/static/images/icons/favicon.png"/>
 	<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/fonts/iconic/css/material-design-iconic-font.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/vendor/animate/animate.css">
@@ -25,11 +25,12 @@
 					<input type="hidden" name="ssid" value="<%= req.query.ssid %>" />
 					<input type="hidden" name="login_url" value="<%= req.query.post %>" />
 					<input type="hidden" name="station_mac" value="<%= req.query.usermac %>" />
+					<input type="hidden" name="apmac" value="<%= req.query.apmac %>" />
 					<input type="hidden" name="station_ip" value="<%= req.query.userip %>" />
 					<div style="text-align: center;" class="p-b-30">
 						<img src="/static/images/logo3.png" width="200">
 					</div>
-					<span class="login100-form-title p-b-49">
+					<span class="login100-form-title p-b-30">
 						NLSC Free Wi-Fi
 					</span>
 
@@ -39,6 +40,8 @@
 						<span class="focus-input100" data-symbol="&#xf15a;"></span>
 					</div> -->
 
+<% // Only show if debug param set %>
+<% if (req.query.debug) { %>
 					<div class="p-t-30 p-b-30">
 						<span>Debug Request Info:</span>
 						<br>
@@ -59,6 +62,7 @@
 	  userRecord: userRecord,
 }) %></pre>
 					</div>
+<% } %>
 
 					<div class="container-login100-form-btn">
 						<div class="wrap-login100-form-btn">
@@ -70,7 +74,7 @@
 					</div>
 				</form>
 
-				<div class="text-left p-t-20 fs-9">
+				<div class="text-left p-t-30 fs-9">
 					<strong>Terms of use:</strong>
                     Your use of any information or materials on sites you access is entirely at your own risk, for which we shall not be liable.
                     You agree that, though this connection, you will not perform any of the following acts:

@@ -315,7 +315,7 @@ iframe {
   z-index: -1;
   width: 300%;
   height: 100%;
-  background: #a64bf4;
+  background: #003366;
   background: -webkit-linear-gradient(right, #003366, #cc0000, #003366, #cc0000);
   background: -o-linear-gradient(right, #003366, #cc0000, #003366, #cc0000);
   background: -moz-linear-gradient(right, #003366, #cc0000, #003366, #cc0000);

@@ -7,9 +7,10 @@ const wifiGuestPass = 'Skills2022'
 // Setup user model
 const userSchema = new dynamoose.Schema({
     "id": String, // mac address of device
-    "email": String,
+    //"email": String,
     "user_agent": String,
-    "last_station": String,
+    "last_ap_mac": String,
+    "mac_address": String,
     "last_ip": String,
 }, {
     "saveUnknown": true,
@@ -20,7 +21,7 @@ const User = dynamoose.model(
 
 app.post('/_login', async (req, res) => {
   const body = req.body
-  const email = body.email
+  //const email = body.email
   const stationMac = body.station_mac
   let resp = {status: true}
   if (stationMac == undefined || stationMac == "") {
@@ -30,13 +31,15 @@ app.post('/_login', async (req, res) => {
     let userRecord = await getUserRecord(stationMac)
     if (!userRecord || userRecord.id == undefined) {
       userRecord = new User({"id": macFormatter(stationMac)})
+      userRecord.mac_address = stationMac
     }
     userRecord.user_agent = req.headers['user-agent']
     userRecord.last_ip = body.station_ip
+    userRecord.last_ap_mac = body.apmac
     await userRecord.save()
     resp.user = wifiGuestUser
     resp.pass = wifiGuestPass
-    resp.record = userRecord
+    //resp.record = userRecord
     resp.magic = body.magic
     resp.url = body.login_url
   }
