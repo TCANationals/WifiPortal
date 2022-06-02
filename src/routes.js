@@ -23,7 +23,7 @@ app.post('/_login', async (req, res) => {
   const body = req.body
   //const email = body.email
   const stationMac = body.station_mac
-  let resp = {status: true}
+  let resp = {status: true, form: []}
   if (stationMac == undefined || stationMac == "") {
     resp.status = false
   }
@@ -37,10 +37,10 @@ app.post('/_login', async (req, res) => {
     userRecord.last_ip = body.station_ip
     userRecord.last_ap_mac = body.apmac
     await userRecord.save()
-    resp.user = wifiGuestUser
-    resp.pass = wifiGuestPass
-    //resp.record = userRecord
-    resp.magic = body.magic
+    resp.form.push({k: 'userid', v: wifiGuestUser});
+    resp.form.push({k: 'username', v: wifiGuestUser});
+    resp.form.push({k: 'password', v: wifiGuestPass});
+    resp.form.push({k: 'magic', v: body.magic});
     resp.url = body.login_url
   }
   res.json(resp)
