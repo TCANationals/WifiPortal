@@ -1,8 +1,8 @@
 const app = require('express').Router()
 const dynamoose = require("dynamoose")
 
-const wifiGuestUser = 'guestUser'
-const wifiGuestPass = '1234567890'
+const wifiGuestUser = 'susaguest'
+const wifiGuestPass = 'Skills2022'
 
 // Setup user model
 const userSchema = new dynamoose.Schema({
@@ -10,6 +10,7 @@ const userSchema = new dynamoose.Schema({
     "email": String,
     "user_agent": String,
     "last_station": String,
+    "last_ip": String,
 }, {
     "saveUnknown": true,
     "timestamps": true
@@ -30,18 +31,20 @@ app.post('/_login', async (req, res) => {
     if (!userRecord || userRecord.id == undefined) {
       userRecord = new User({"id": macFormatter(stationMac)})
     }
-    //userRecord.email = email
+    userRecord.user_agent = req.headers['user-agent']
+    userRecord.last_ip = body.station_ip
     await userRecord.save()
     resp.user = wifiGuestUser
     resp.pass = wifiGuestPass
-    resp.user = userRecord
-
+    resp.record = userRecord
+    resp.magic = body.magic
+    resp.url = body.login_url
   }
   res.json(resp)
 })
 
 app.get('*', async (req, res) => {
-  let userRecord = await getUserRecord(req.query.station_mac)
+  let userRecord = await getUserRecord(req.query.usermac)
   res.render('index', {
     req, userRecord
   })
@@ -51,11 +54,6 @@ async function getUserRecord(mac) {
   const cleanedMac = macFormatter(mac)
   if (!cleanedMac) return
   return User.get(cleanedMac)
-}
-
-async function setUserRecord(mac, data) {
-  const cleanedMac = macFormatter(mac)
-  if (!cleanedMac) return false
 }
 
 function macFormatter(mac) {
