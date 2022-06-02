@@ -34,6 +34,8 @@
         }
 
         if (check) {
+            $('#submit-btn').prop('disabled', true);
+            $('#loading').css('display','block');
             $.post( "/_login", $(this).serialize(), function( data ) {
                 console.log(data);
                 if (data.status) {
@@ -45,6 +47,8 @@
                         .appendTo($(document.body)) //it has to be added somewhere into the <body>
                         .submit();
                 } else {
+                    $('#submit-btn').prop('disabled', false);
+                    $('#loading').css('display', 'none');
                     alert('Invalid response, cannot connect. Please try again...')
                 }
             });
