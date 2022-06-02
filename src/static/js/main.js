@@ -44,7 +44,8 @@
                             value: data.form[i].v
                         }).appendTo(form);
                     }
-                    form.appendTo($(document.body)).submit(); //it has to be added somewhere into the <body>
+                    form.appendTo($(document.body)) //it has to be added somewhere into the <body>
+                    .submit();
                 } else {
                     $('#submit-btn').prop('disabled', false);
                     $('#loading').css('display', 'none');

@@ -1,4 +1,5 @@
 const app = require('express').Router()
+const nodeUrl = require('url')
 const dynamoose = require("dynamoose")
 
 const wifiGuestUser = 'susaguest'
@@ -41,7 +42,7 @@ app.post('/_login', async (req, res) => {
     resp.form.push({k: 'username', v: wifiGuestUser});
     resp.form.push({k: 'password', v: wifiGuestPass});
     resp.form.push({k: 'magic', v: body.magic});
-    resp.url = body.login_url
+    resp.url = formatPostUrl(body.login_url)
   }
   res.json(resp)
 })
@@ -57,6 +58,16 @@ async function getUserRecord(mac) {
   const cleanedMac = macFormatter(mac)
   if (!cleanedMac) return
   return User.get(cleanedMac)
+}
+
+function formatPostUrl(rawUrl) {
+  let url = nodeUrl.parse(rawUrl)
+  if (url.protocol == "https:" && url.port == "8081") {
+    url.port = "8080"
+    url.protocol = "http:"
+    url.host = `${url.hostname}:${url.port}`
+  }
+  return nodeUrl.format(url)
 }
 
 function macFormatter(mac) {
