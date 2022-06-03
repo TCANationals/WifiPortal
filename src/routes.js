@@ -47,6 +47,10 @@ app.post('/_login', async (req, res) => {
   res.json(resp)
 })
 
+app.get('/success', async (req, res) => {
+  res.render('success')
+})
+
 app.get('*', async (req, res) => {
   let userRecord = await getUserRecord(req.query.usermac)
   res.render('index', {
@@ -63,7 +67,7 @@ async function getUserRecord(mac) {
 function formatPostUrl(rawUrl) {
   let url = nodeUrl.parse(rawUrl)
   if (url.protocol == "https:" && url.port == "8081") {
-    url.port = "8080"
+    url.port = "8082"
     url.protocol = "http:"
     url.host = `${url.hostname}:${url.port}`
   }
