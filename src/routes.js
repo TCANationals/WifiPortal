@@ -13,6 +13,11 @@ const userSchema = new dynamoose.Schema({
     "last_ap_mac": String,
     "mac_address": String,
     "last_ip": String,
+    "last_apid": String,
+    "last_ap_location": String,
+    "last_ap_floor": String,
+    "last_ap_building": String,
+    "last_ssid": String,
 }, {
     "saveUnknown": true,
     "timestamps": true
@@ -37,6 +42,11 @@ app.post('/_login', async (req, res) => {
     userRecord.user_agent = req.headers['user-agent']
     userRecord.last_ip = body.station_ip
     userRecord.last_ap_mac = body.apmac
+    userRecord.last_apid = body.apid
+    userRecord.last_ap_location = body.ap_location
+    userRecord.last_ap_floor = body.ap_floor
+    userRecord.last_ap_building = body.ap_building
+    userRecord.last_ssid = body.ssid
     await userRecord.save()
     resp.form.push({k: 'userid', v: wifiGuestUser});
     resp.form.push({k: 'username', v: wifiGuestUser});
