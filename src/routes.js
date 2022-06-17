@@ -8,6 +8,7 @@ const wifiGuestPass = 'Skills2022'
 // Setup user model
 const userSchema = new dynamoose.Schema({
     "id": String, // mac address of device
+    "seen_count": Number,
     //"email": String,
     "user_agent": String,
     "last_ap_mac": String,
@@ -38,7 +39,9 @@ app.post('/_login', async (req, res) => {
     if (!userRecord || userRecord.id == undefined) {
       userRecord = new User({"id": macFormatter(stationMac)})
       userRecord.mac_address = stationMac
+      userRecord.seen_count = 0
     }
+    userRecord.seen_count = (userRecord.seen_count || 0) + 1
     userRecord.user_agent = req.headers['user-agent']
     userRecord.last_ip = body.station_ip
     userRecord.last_ap_mac = body.apmac
