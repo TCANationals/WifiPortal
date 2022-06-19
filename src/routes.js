@@ -66,8 +66,12 @@ app.get('/success', async (req, res) => {
 
 app.get('*', async (req, res) => {
   let userRecord = await getUserRecord(req.query.usermac)
+  let userSeen = 0
+  if (userRecord) {
+    userSeen = 1
+  }
   res.render('index', {
-    req, userRecord
+    req, userRecord, userSeen
   })
 })
 

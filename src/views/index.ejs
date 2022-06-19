@@ -103,5 +103,9 @@
 	<script src="/static/vendor/bootstrap/js/popper.js"></script>
 	<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/static/js/main.js"></script>
+	<% // Auto process login if user already seen %>
+	<% if (userSeen) { %>
+	<script>$( document ).ready(function() {$('.validate-form').submit()})</script>
+	<% } %>
 </body>
 </html>
