@@ -159,9 +159,32 @@ iframe {
   background-image: url('../images/bg-04.jpg');
 }
 
+input[type=checkbox] {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
+label { 
+  display: inline-block;
+  cursor: pointer;
+}
+
+#terms {
+  display: none;
+}
+
+#terms:active {
+  display: flex;
+}
+
+input[type=checkbox]:checked ~ #terms {
+  display: flex;
+}
+
 .wrap-login100 {
   width: 500px;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.7) ;
   border-radius: 10px;
   overflow: hidden;
 }
