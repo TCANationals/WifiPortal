@@ -12,8 +12,8 @@
 	<link rel="stylesheet" type="text/css" href="/static/vendor/animsition/css/animsition.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/vendor/select2/select2.min.css">
 	<link rel="stylesheet" type="text/css" href="/static/vendor/loading/loading.min.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/util.css">
-	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/util.css?h=<%= cssHash.util %>">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css?h=<%= cssHash.main %>">
 </head>
 <body>
 
@@ -33,11 +33,19 @@
 					<input type="hidden" name="ap_building" value="<%= req.query.ap_building %>" />
 					<input type="hidden" name="station_ip" value="<%= req.query.userip %>" />
 					<div style="text-align: center;" class="p-b-30">
-						<img src="/static/images/logo3.png" width="200">
+						<img src="/static/images/logo3.png" width="170">
 					</div>
 					<span class="login100-form-title p-b-30">
 						NLSC Free Wi-Fi
 					</span>
+
+					<span class="login100-form-sponsor p-b-30">
+						Sponsored By
+					</span>
+
+					<div style="text-align: center;" class="p-b-30">
+						<img src="/static/images/delta_c_r.png" width="200">
+					</div>
 
 					<!-- <div class="wrap-input100 validate-input m-b-23" data-validate="Email is required">
 						<span class="label-input100">Email</span>

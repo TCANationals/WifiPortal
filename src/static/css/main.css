@@ -184,7 +184,7 @@ input[type=checkbox]:checked ~ #terms {
 
 .wrap-login100 {
   width: 500px;
-  background: rgba(255, 255, 255, 0.7) ;
+  background: rgba(255, 255, 255, 0.8) ;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -201,7 +201,17 @@ input[type=checkbox]:checked ~ #terms {
   display: block;
   font-family: Poppins;
   font-weight: 700;
-  font-size: 36px;
+  font-size: 30px;
+  color: #333333;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.login100-form-sponsor {
+  display: block;
+  font-family: Poppins;
+  font-weight: 700;
+  font-size: 16px;
   color: #333333;
   line-height: 1.2;
   text-align: center;

@@ -1,6 +1,14 @@
 const app = require('express').Router()
 const nodeUrl = require('url')
 const dynamoose = require("dynamoose")
+const fs = require('fs')
+const path = require('path')
+const crypto = require('crypto')
+
+var cssHash = {
+  main : generateChecksum(fs.readFileSync(path.resolve(__dirname, 'static/css/main.css'),'utf8')),
+  util : generateChecksum(fs.readFileSync(path.resolve(__dirname, 'static/css/util.css'),'utf8')),
+};
 
 const wifiGuestUser = 'susaguest'
 const wifiGuestPass = 'Skills2022'
@@ -61,7 +69,7 @@ app.post('/_login', async (req, res) => {
 })
 
 app.get('/success', async (req, res) => {
-  res.render('success')
+  res.render('success', { cssHash })
 })
 
 app.get('*', async (req, res) => {
@@ -71,7 +79,7 @@ app.get('*', async (req, res) => {
     userSeen = 1
   }
   res.render('index', {
-    req, userRecord, userSeen
+    req, userRecord, userSeen, cssHash
   })
 })
 
@@ -100,6 +108,13 @@ function macFormatter(mac) {
     return cleanedMac
   }
   return
+}
+
+function generateChecksum(str, algorithm, encoding) {
+  return crypto
+      .createHash(algorithm || 'md5')
+      .update(str, 'utf8')
+      .digest(encoding || 'hex');
 }
 
 module.exports = app
