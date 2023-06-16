@@ -11,7 +11,7 @@ var cssHash = {
 };
 
 const wifiGuestUser = 'susaguest'
-const wifiGuestPass = 'Skills2022'
+const wifiGuestPass = 'Skills2023'
 
 // Setup user model
 const userSchema = new dynamoose.Schema({
