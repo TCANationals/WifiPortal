@@ -50,7 +50,9 @@
                     $('#submit-btn').prop('disabled', false);
                     $('#loading').css('display', 'none');
                     alert('Invalid response, cannot connect. Please try again...')
-                    $('#debugInfo').text(JSON.stringify(data));
+                    if (window.location.search.indexOf('debug') > -1) {
+                        $('#debugInfo').text(JSON.stringify(data));
+                    }
                 }
             });
         }
