@@ -8,6 +8,7 @@ const crypto = require('crypto')
 var cssHash = {
   main : generateChecksum(fs.readFileSync(path.resolve(__dirname, 'static/css/main.css'),'utf8')),
   util : generateChecksum(fs.readFileSync(path.resolve(__dirname, 'static/css/util.css'),'utf8')),
+  mainJs : generateChecksum(fs.readFileSync(path.resolve(__dirname, 'static/js/main.js'),'utf8')),
 };
 
 const wifiGuestUser = 'susaguest'

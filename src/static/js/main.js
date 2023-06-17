@@ -33,7 +33,8 @@
         if (check) {
             $('#submit-btn').prop('disabled', true);
             $('#loading').css('display','block');
-            $.post( "/_login", $(this).serialize(), function( data ) {
+            var formData = $(this).serialize()
+            $.post( "/_login", formData, function( data ) {
                 console.log(data);
                 if (data.status) {
                     var form = $('<form action="" method="POST"/>').attr({action: data.url});
@@ -51,7 +52,7 @@
                     $('#loading').css('display', 'none');
                     alert('Invalid response, cannot connect. Please try again...')
                     if (window.location.search.indexOf('debug') > -1) {
-                        $('#debugInfo').text(JSON.stringify(data));
+                        $('#debugInfo').html('<pre>' + formData + "\n\n" + JSON.stringify(data) + "</pre>");
                     }
                 }
             });

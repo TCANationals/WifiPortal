@@ -120,7 +120,7 @@
 	<script src="/static/vendor/animsition/js/animsition.min.js"></script>
 	<script src="/static/vendor/bootstrap/js/popper.js"></script>
 	<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
-	<script src="/static/js/main.js"></script>
+	<script src="/static/js/main.js?h=<%= cssHash.mainJs %>"></script>
 	<% // Auto process login if user already seen and not debug %>
 	<% if (userSeen && !req.query.debug) { %>
 	<script>$( document ).ready(function() {$('.validate-form').submit()})</script>
