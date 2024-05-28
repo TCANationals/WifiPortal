@@ -25,7 +25,7 @@ Resources:
       CodeUri: ./dist
       Handler: main.handler
       MemorySize: 256
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       Timeout: 30
       Environment:
         Variables:
@@ -48,7 +48,7 @@ Resources:
       CodeUri: ./dist
       Handler: static.handler
       MemorySize: 128
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       Timeout: 30
 
   # Allow ALB to invoke lambda function

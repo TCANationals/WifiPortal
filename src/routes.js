@@ -13,6 +13,7 @@ var cssHash = {
 
 const wifiGuestUser = 'susaguest'
 const wifiGuestPass = 'Skills2024'
+const recordIdPrefix = '2024'
 
 // Setup user model
 const userSchema = new dynamoose.Schema({
@@ -106,7 +107,7 @@ function macFormatter(mac) {
   }
   const cleanedMac = mac.toLowerCase().replace(/[^a-f0-9]/g, '')
   if (cleanedMac.length == 12) {
-    return cleanedMac
+    return recordIdPrefix.concat('-', cleanedMac)
   }
   return
 }
