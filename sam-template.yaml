@@ -26,6 +26,8 @@ Resources:
       Handler: main.handler
       MemorySize: 256
       Runtime: nodejs18.x
+      Architectures:
+        - arm64
       Timeout: 30
       Environment:
         Variables:
@@ -49,6 +51,8 @@ Resources:
       Handler: static.handler
       MemorySize: 128
       Runtime: nodejs18.x
+      Architectures:
+        - arm64
       Timeout: 30
 
   # Allow ALB to invoke lambda function

@@ -40,14 +40,15 @@ app.post('/_login', async (req, res) => {
   const body = req.body
   //const email = body.email
   const stationMac = body.station_mac
+  const macId = macFormatter(stationMac)
   let resp = {status: true, form: []}
-  if (stationMac == undefined || stationMac == "") {
+  if (stationMac == undefined || stationMac == "" || macId == undefined) {
     resp.status = false
   }
   if (resp.status) {
     let userRecord = await getUserRecord(stationMac)
     if (!userRecord || userRecord.id == undefined) {
-      userRecord = new User({"id": macFormatter(stationMac)})
+      userRecord = new User({"id": macId})
       userRecord.mac_address = stationMac
       userRecord.seen_count = 0
     }
@@ -103,12 +104,14 @@ function formatPostUrl(rawUrl) {
 
 function macFormatter(mac) {
   if (mac == undefined || mac == "") {
+    console.log("undefined or empty mac address, cannot continue")
     return
   }
   const cleanedMac = mac.toLowerCase().replace(/[^a-f0-9]/g, '')
   if (cleanedMac.length == 12) {
     return recordIdPrefix.concat('-', cleanedMac)
   }
+  console.log("mac address not 12 characters, cannot continue")
   return
 }
 
